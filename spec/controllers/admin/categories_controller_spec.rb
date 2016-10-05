@@ -15,6 +15,28 @@ describe Admin::CategoriesController do
     get :index
     assert_response :redirect, :action => 'index'
   end
+  
+  it "test_new" do
+    get :new
+    assert_not_nil :category
+    assert_template 'new'
+  end
+  
+=begin
+  describe "test_new" do
+    before(:each) do
+      get :new
+    end
+    #
+    it 'should render template new' do
+      assert_template 'new'
+    end
+    #
+    it 'should have valid category' do
+      assigns(:category).should_not be_nil
+    end
+  end
+=end
 
   describe "test_edit" do
     before(:each) do

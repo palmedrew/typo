@@ -113,6 +113,32 @@ class Admin::ContentController < Admin::BaseController
     render :text => nil
   end
 
+
+  def merge
+  
+    unless current_user.admin? and request.post? and params[:_method] == 'patch'
+      redirect_to :action => 'index'
+      flash[:error] = _("Error, you are not allowed to perform this action")
+      return
+    end
+    
+    if params[:id] == params[:merge_with]
+      flash[:error] = _("Error, can not merge article id #{params[:id]} with itself")
+    else
+      destination_article = Article.find(params[:id])
+      begin
+        destination_article = destination_article.merge_with(params[:merge_with])
+      rescue ActiveRecord::RecordNotFound
+        flash[:error] = _("Error, source article id #{params[:merge_with]} not found")
+      end
+    end
+    
+    new_or_edit
+  
+  end
+ 
+ 
+ 
   protected
 
   def get_fresh_or_existing_draft_for_article
@@ -146,7 +172,7 @@ class Admin::ContentController < Admin::BaseController
     @article.text_filter = current_user.text_filter if current_user.simple_editor?
 
     @post_types = PostType.find(:all)
-    if request.post?
+    if request.post? and params[:_method] != 'patch'
       if params[:article][:draft]
         get_fresh_or_existing_draft_for_article
       else
@@ -162,7 +188,7 @@ class Admin::ContentController < Admin::BaseController
         
     @article.published_at = DateTime.strptime(params[:article][:published_at], "%B %e, %Y %I:%M %p GMT%z").utc rescue Time.parse(params[:article][:published_at]).utc rescue nil
 
-    if request.post?
+    if request.post? and params[:_method] != 'patch'
       set_article_author
       save_attachments
       

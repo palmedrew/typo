@@ -122,6 +122,22 @@ class Article < Content
 
   end
 
+  def merge_with(source_id)
+    source_article = Article.find(source_id)
+    
+    self.body += source_article.body
+    source_article.feedback.each do |comment|
+      comment.article_id = self.id      
+      comment.save!
+    end
+    
+    self.save
+    self.reload
+    source_article.delete
+    
+    return self
+  end
+  
   def year_url
     published_at.year.to_s
   end

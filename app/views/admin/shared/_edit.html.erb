@@ -4,3 +4,7 @@
   <%= render :partial => "form" %>
 
 <% end %>
+
+<% if ['edit', 'merge'].include? params[:action] and current_user.admin? %>
+  <%= render :partial => "merge_form" %>
+<% end %>

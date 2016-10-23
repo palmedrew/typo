@@ -1,0 +1,10 @@
+<div class='separator'>
+  <div>
+     <h4><%= _("Merge Articles") %></h4>
+        <%= form_tag({:action => "merge", :id => @article.id}, :id => "merge_form", :method => "patch", :enctype => "multipart/form-data") do %>
+          <%= label_tag(:merge_with, "Article ID") %>
+          <%= text_field_tag(:merge_with) %>
+          <%= submit_tag("Merge") %>
+        <% end %>
+  </div>
+</div>
